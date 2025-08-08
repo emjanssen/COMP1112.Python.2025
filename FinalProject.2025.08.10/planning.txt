@@ -1,0 +1,87 @@
+Intro/problem statement: 
+I was an admin assistant for six years. 
+At one of those jobs, I manually maintained an excel file with details for the 170-ish people on our program team.
+Purpose of this assignment: automate data entry into a similar excel file.
+Premise: every time someone joins the team, they email the admin a table with their details, based on a specific template provided by the admin.
+This wouldn't be official documentation from HR; it'd be something program-specific, with details relevant to the admin.
+Application will read table data from email and input data to excel file.
+Two code sections: 1. create initial excel file / 2. read table and input data
+
+Modules Required: os, openpyxl, docx
+
+// - - - Directory - - - //
+
+1. Create directory
+reference code (from lecture 7):
+
+import os
+if (os.path.exists("C:\\example\\subfolder\\test")==False):
+os.makedirs("C:\\example\\subfolder\\test")
+else:
+// open existing file (or create file)
+
+// - - - Initial Excel File - - - //
+
+For reference:
+https://automatetheboringstuff.com/3e/chapter14.html
+https://openpyxl.readthedocs.io/en/stable/
+https://www.geeksforgeeks.org/python/creating-the-workbook-and-worksheet-using-openpyxl-in-python/
+
+# Save the workbook to a file
+wb.save("myworkbook.xlsx")
+
+import openpyxl
+wb = openpyxl.load_workbook('example3.xlsx')
+type(wb)
+
+another_sheet = wb.active  # Get the active sheet.
+>>> another_sheet
+
+sheet = wb['Sheet1']  # Get a sheet from the workbook.
+
+/ / / 
+
+2. Create excel file rename sheet
+
+from openpyxl import Workbook
+# Create a workbook
+wb = Workbook()
+
+3. Get active sheet
+
+# Get the active worksheet or create a new sheet
+ws = wb.active
+
+4. Rename the default sheet
+
+ws.title = "MySheet"
+
+5. Append row with column headings
+
+append(iterable)
+Appends a group of values at the bottom of the current sheet.
+append([‘This is A1’, ‘This is B1’, ‘This is C1’]) 
+
+will need 8 columns
+- first name
+- last name
+- company
+- department (if internal staff)
+- supervisor
+- start date
+- end date (if applicable)
+- allergies
+
+6. Save file
+
+# Save the workbook to a file
+wb.save("myworkbook.xlsx")
+
+7. Close file
+
+// - - - Read Table From Email - - - //
+
+
+
+"""
+

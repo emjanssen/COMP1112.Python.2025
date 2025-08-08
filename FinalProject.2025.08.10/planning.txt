@@ -1,29 +1,36 @@
 Intro/problem statement: 
 I worked as an admin assistant for six years.
 At one of those jobs, I manually maintained an excel file with details for the 170-ish people on our program team.
-Purpose of this assignment: automate data entry into a similar excel file.
-Premise: every time someone joins the team, they email the admin a word doc with their details, based on a specific template provided by the admin.
-This wouldn't be official documentation from HR; it'd be something program-specific, with details relevant to the admin (for catering, events, mailing lists, etc).
+Purpose of this assignment: automate data entry relevant to that excel file.
+Premise: every time someone joins the team, they email the admin their details, based on a specific template provided by the admin.
+This wouldn't be official documentation from HR; it'd be something program-specific, with details relevant to the admin.
 
 Template would be provided as an Excel file, and admin would ask team member to complete the excel file and return it.
 Application will have code that can read the table data from the following mediums:
 - Excel file
 - Word doc
 - Email in outlook
-So it covers people who return the Excel file, people who copy the table into an email instead, and people who return it as a word doc instead.
-It will input the user data to a workbook, and output a couple specific reports/lists (like a list of food allergies).
-Four code sections:
+So it covers people who return the Excel file, people who copy the table into an email instead, and people who return it as a Word doc instead.
+It will input the user data to a workbook, and output a couple specific reports/lists (for example, a list of food allergies).
+Six code sections:
 1. Create initial workbook
-2. Read data from Excel File | read data from email
-3. Input data into workbook
-4. Output curated lists
+2. Read data from Excel File
+3. Read data from email
+4. Read data from Word doc
+5. Input data into workbook
+6. Output curated lists
 
 Modules Required: os, openpyxl, docx, subprocess
+import imaplib
+import email
+from email.header import decode_header
+import webbrowser
 Reference:
 
 https://automatetheboringstuff.com/3e/chapter14.html
 https://openpyxl.readthedocs.io/en/stable/
 https://www.geeksforgeeks.org/python/creating-the-workbook-and-worksheet-using-openpyxl-in-python/
+https://thepythoncode.com/article/reading-emails-in-python
 
 // - - - - - Directory - - - - - //
 
@@ -59,6 +66,18 @@ append(iterable)
 Appends a group of values at the bottom of the current sheet.
 append([‘This is A1’, ‘This is B1’, ‘This is C1’]) 
 
+# Assign values to cells
+ws['A1'] = "Header 1"
+ws['B1'] = "Header 2"
+
+# You can also append rows to the end of the current data
+ws.append([1, 2])
+ws.append([3, 4])
+
+ws.append("First Name", "Last Name", etc....)
+ws.append("Frodo", "Baggins", etc...)
+syntax will add a new row at the bottom with argument values
+
 Data fields (i.e. eleven columns):
 
 First Name	
@@ -73,12 +92,28 @@ Landline
 Mobile	
 Allergies
 
+example return text text:
+
+Frodo
+Baggins
+The Green Dragon
+Snack Delivery
+Gandalf Mithrandir
+January 11, 2024
+February 17, 2025
+f_baggins@email.com
+1-345-234-6789
+1-453-567-2345
+Gluten, dairy
+
 6. Save workbook
 
 # Save the workbook to a file
 wb.save("myworkbook.xlsx")
 
 7. Close workbook
+
+sampleWorkbook.close()
 
 // - - - Read From Word Doc - - - //
 
@@ -97,7 +132,7 @@ import subprocess
 wordFilePath = r"C:\path\to\your\demo.docx"
 subprocess.Popen(["start", "", wordFilePath], shell=True)
 
-9. Get full text from doc
+10. Get full text from doc
 
 for reading from paragraphs (probably not going to use, but keeping for reference):
 import docx 
@@ -115,20 +150,22 @@ if len(row.cells) >= 2:  # make sure there is a second column
 col2_text.append(row.cells[1].text.strip())  # index 1 = second column
 return col2_text
 
-example return text text:
-
-Frodo
-Baggins
-The Green Dragon
-Snack Delivery
-Gandalf Mithrandir
-January 11, 2024
-February 17, 2025
-f_baggins@email.com
-1-345-234-6789
-1-453-567-2345
-Gluten, dairy
-
 /* Read Excel File */
 
+11. Get cell data
+
+# Accessing range
+cell_range = ws['A1:B2']
+for row in cell_range:
+    for cell in row:
+        print(cell.value)
+
 /* Read From Outlook Email */
+
+learn how using this guide
+1. connect to outlook 
+2. read email content
+3. save to file
+4. close connection and logout
+https://thepythoncode.com/article/reading-emails-in-python
+

@@ -11,39 +11,53 @@ Application will have code that can read the table data from the following mediu
 - Word doc
 - Email in outlook
 So it covers people who return the Excel file, people who copy the table into an email instead, and people who return it as a Word doc instead.
-It will input the user data to a workbook, and output a couple specific reports/lists (for example, a list of food allergies).
-Six code sections:
+Code will need to check doc type, and then execute relevant function (either for Word, Excel, or Outlook).
+We save the extracted data as a variable.
+Close the file.
+Input the user data to a workbook.
+Other functions that can be optionally run: output a couple specific reports/lists (for example, a list of food allergies).
+
+Six basic code sections:
+createWorkbook.py
 1. Create initial workbook
+
+readData.py
 2. Read data from Excel File
-3. Read data from email
-4. Read data from Word doc
+5. Read data from Word doc
+4. Read data from Outlook email
+
+inputData.py
 5. Input data into workbook
+
+generateReports.py
 6. Output curated lists
 
 Modules Required: os, openpyxl, docx, subprocess
+
+Required specifically for Outlook:
 import imaplib
 import email
 from email.header import decode_header
 import webbrowser
-Reference:
 
-https://automatetheboringstuff.com/3e/chapter14.html
-https://openpyxl.readthedocs.io/en/stable/
-https://www.geeksforgeeks.org/python/creating-the-workbook-and-worksheet-using-openpyxl-in-python/
-https://thepythoncode.com/article/reading-emails-in-python
+Resources/reference code:
+- Lectures 7, 8, 11
+- https://automatetheboringstuff.com/3e/chapter14.html
+- https://openpyxl.readthedocs.io/en/stable/
+- https://www.geeksforgeeks.org/python/creating-the-workbook-and-worksheet-using-openpyxl-in-python/
+- https://thepythoncode.com/article/reading-emails-in-python
 
-// - - - - - Directory - - - - - //
+// - - - Process: Create Initial Directory and Workbook - - - - - //
+
++ Will only need to run this once + 
 
 1. Create directory
-reference code (from lecture 7):
 
 import os
 if (os.path.exists("C:\\example\\subfolder\\test")==False):
 os.makedirs("C:\\example\\subfolder\\test")
 else:
 // open existing file (or create file)
-
-// - - - - - Initial Workbook - - - - - //
 
 2. Create workbook
 
@@ -60,23 +74,11 @@ ws = wb.active
 
 ws.title = "MySheet"
 
-5. Append a new row with column headings
-
-append(iterable)
-Appends a group of values at the bottom of the current sheet.
-append([‘This is A1’, ‘This is B1’, ‘This is C1’]) 
+5. Assign a row with the column headings
 
 # Assign values to cells
 ws['A1'] = "Header 1"
 ws['B1'] = "Header 2"
-
-# You can also append rows to the end of the current data
-ws.append([1, 2])
-ws.append([3, 4])
-
-ws.append("First Name", "Last Name", etc....)
-ws.append("Frodo", "Baggins", etc...)
-syntax will add a new row at the bottom with argument values
 
 Data fields (i.e. eleven columns):
 
@@ -92,20 +94,6 @@ Landline
 Mobile	
 Allergies
 
-example return text text:
-
-Frodo
-Baggins
-The Green Dragon
-Snack Delivery
-Gandalf Mithrandir
-January 11, 2024
-February 17, 2025
-f_baggins@email.com
-1-345-234-6789
-1-453-567-2345
-Gluten, dairy
-
 6. Save workbook
 
 # Save the workbook to a file
@@ -115,24 +103,14 @@ wb.save("myworkbook.xlsx")
 
 sampleWorkbook.close()
 
-// - - - Read From Word Doc - - - //
+// - - - Process: Extract Data from Word Doc - - - //
 
-8. Open workbook
-
-import openpyxl
-wb = openpyxl.load_workbook('example3.xlsx')
-type(wb)
-
-9. Open doc file submitted by team member
-uses windows default app for .docx (which is normally word)
-don't have to know where word is installed
+1. Open doc file submitted by team member
 
 import subprocess
+applProcess = subprocess.Popen(["C:\\Windows\\System32\\notepad.exe", "c:\\misc\text\.txt"])
 
-wordFilePath = r"C:\path\to\your\demo.docx"
-subprocess.Popen(["start", "", wordFilePath], shell=True)
-
-10. Get full text from doc
+2. Get full text from doc
 
 for reading from paragraphs (probably not going to use, but keeping for reference):
 import docx 
@@ -150,9 +128,41 @@ if len(row.cells) >= 2:  # make sure there is a second column
 col2_text.append(row.cells[1].text.strip())  # index 1 = second column
 return col2_text
 
-/* Read Excel File */
+example return text:
 
-11. Get cell data
+Frodo
+Baggins
+The Green Dragon
+Snack Delivery
+Gandalf Mithrandir
+January 11, 2024
+February 17, 2025
+f_baggins@email.com
+1-345-234-6789
+1-453-567-2345
+Gluten, dairy
+
+3. Save data as variable 
+
+4. Close word doc
+
+applProcess.kill()
+
+5. Open Team List workbook
+
+import openpyxl
+sampleWorkbook = openpyxl.load_workbook("C:\\GeorgianCollege\\COMP1099\\TestFile.xlsx")
+
+6. Input data into Team List Workbook (Process: Input Data Into Workbook )
+
+// - - - Process: Extract Data from Excel File - - - //
+
+1. Open excel file submitted by team member
+
+import openpyxl
+sampleWorkbook = openpyxl.load_workbook("C:\\GeorgianCollege\\COMP1099\\TestFile.xlsx")
+
+2. Get cell data
 
 # Accessing range
 cell_range = ws['A1:B2']
@@ -160,7 +170,20 @@ for row in cell_range:
     for cell in row:
         print(cell.value)
 
-/* Read From Outlook Email */
+3. Save data as variable
+
+4. Close excel file
+
+sampleWorkbook.close()
+
+5. Open Team List workbook
+
+import openpyxl
+sampleWorkbook = openpyxl.load_workbook("C:\\GeorgianCollege\\COMP1099\\TestFile.xlsx")
+
+6. Input data into Team List Workbook (Process: Input Data Into Workbook )
+
+// - - - Process: Extract Data from Outlook Email - - - //
 
 learn how using this guide
 1. connect to outlook 
@@ -169,3 +192,17 @@ learn how using this guide
 4. close connection and logout
 https://thepythoncode.com/article/reading-emails-in-python
 
+/* - - - Process: Input Data Into Workbook - - - */
+
+1. Append a new row with values
+
+append(iterable)
+Appends a group of values at the bottom of the current sheet.
+append([‘This is A1’, ‘This is B1’, ‘This is C1’]) 
+
+# You can also append rows to the end of the current data
+ws.append([1, 2])
+ws.append([3, 4])
+
+ws.append("Frodo", "Baggins", etc...)
+syntax will add a new row at the bottom with argument values

@@ -130,7 +130,7 @@ sampleWorkbook.close()
 
 // - - - Process: Extract Data from Word Doc - - - //
 
-1. Open doc file submitted by team member
+1. Open doc file submitted by team member - don't actually need to open doc to read from it; would only need this if we were writing to word doc
 
 import subprocess
 applProcess = subprocess.Popen(["C:\\Windows\\System32\\notepad.exe", "c:\\misc\text\.txt"])
@@ -169,7 +169,7 @@ Gluten, dairy
 
 3. Save data as variable 
 
-4. Close word doc
+4. Close word doc - won't need to do this, cause we didn't end up opening it
 
 applProcess.kill()
 

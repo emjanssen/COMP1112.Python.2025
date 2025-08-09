@@ -11,7 +11,7 @@ def readWordDoc():
     
     # fileFromUser is the variable the admin will change to determine which word doc they wish to read from
     fileFromUser = "TeamMemberThree.docx"
-    folderForUserFiles = r"C:\Users\E.M. Janssen\Documents\GitHub\COMP1112.Python.2025\FinalProject.2025.08.10\ExampleFiles"
+    folderForUserFiles = r"C:\Users\E.M. Janssen\Documents\GitHub\COMP1112.Python.2025\FinalProject.2025.08.10\ProgramTeam"
     projectRootDirectory = r"C:\Users\E.M. Janssen\Documents\GitHub\COMP1112.Python.2025\FinalProject.2025.08.10"
 
     fileName = os.path.join(projectRootDirectory, folderForUserFiles, fileFromUser)
@@ -31,7 +31,7 @@ def printWordDocText(columnTwoText):
 
 def openAdminWorkbook():
 
-    adminWorkbookLocation = r"C:\Users\E.M. Janssen\Documents\GitHub\COMP1112.Python.2025\FinalProject.2025.08.10\admin\\adminWorkbook.xlsx"
+    adminWorkbookLocation = r"C:\Users\E.M. Janssen\Documents\GitHub\COMP1112.Python.2025\FinalProject.2025.08.10\admin\adminWorkbook.xlsx"
 
     adminWorkbook = openpyxl.load_workbook(adminWorkbookLocation)
     print("We have opened our admin workbook...")

@@ -1,0 +1,301 @@
+
+In one of my past positions, I manually maintained an excel file with details for the 170-ish people on our program team.
+Purpose of this process: automate data entry relevant to that excel file.
+Premise: every time someone joins the team, they email the admin their details, based on a specific template provided by the admin.
+This wouldn't be official documentation from HR; it'd be something program-specific, with details relevant to the admin.
+
+Template would be provided as an Excel file, and admin would ask team member to complete the excel file and return it.
+Application will have code that can read the table data from the following mediums:
+- Excel file
+- Word doc
+So it covers people who return the Excel file, and people who return it as a Word doc instead.
+Code will need to check doc type, and then execute relevant function (either for Word, Excel, or Outlook).
+We save the extracted data as a variable.
+Close the file.
+Input the user data to a workbook.
+Other functions that can be optionally run: output a couple specific reports/lists (for example, a list of food allergies).
+Template would ask users to leave allergies field empty if they have none; might need to manually verify new entires to make sure the field doesn't say something like 'n/a'.
+
+Six basic steps:
+1. Create initial workbook
+2. Read data from Excel File
+3. Read data from Word doc
+4. Input data into workbook
+5. Generate reports (in this case, list of allergies for catering purposes)
+
+Modules Required: os, openpyxl, docx, subprocess
+from openpyxl.worksheet.worksheet import Worksheet
+from openpyxl.worksheet.copier import WorksheetCopy
+
+Resources for reference code:
+- Lectures 7, 8, 11
+- https://automatetheboringstuff.com/3e/chapter14.html
+- https://openpyxl.readthedocs.io/en/stable/
+- https://www.geeksforgeeks.org/python/creating-the-workbook-and-worksheet-using-openpyxl-in-python/
+- https://thepythoncode.com/article/reading-emails-in-python
+
+// - - - Process: Create Initial Directory and Workbook - - - - - //
+
++ Will only need to run this once + 
+
+1. Create directory
+
+import os
+if (os.path.exists("C:\\example\\subfolder\\test")==False):
+os.makedirs("C:\\example\\subfolder\\test")
+else:
+// open existing file (or create file)
+
+2. Create workbook
+
+from openpyxl import Workbook
+# Create a workbook
+wb = Workbook()
+
+3. Get active sheet
+
+# Get active worksheet
+ws = wb.active
+
+4. Rename active sheet
+
+ws.title = "MySheet"
+
+5. Assign a row with the column headings
+
+# Assign values to cells
+ws['A1'] = "Header 1"
+ws['B1'] = "Header 2"
+
+Data fields (i.e. eleven columns):
+
+First Name	
+Last Name	
+Company	
+Department (if you are an internal staff member)	
+Supervisor	
+Start date	
+End date (if applicable) 	
+Email	
+Landline	
+Mobile	
+Food Allergies
+
+7. Add a second sheet (for generating the most current allergy list)
+
+    def create_sheet(self, title=None, index=None):
+        """Create a worksheet (at an optional index).
+
+        :param title: optional title of the sheet
+        :type title: str
+        :param index: optional position at which the sheet will be inserted
+        :type index: int
+
+        """
+        if self.read_only:
+            raise ReadOnlyWorkbookException('Cannot create new sheet in a read-only workbook')
+
+        if self.write_only :
+            new_ws = WriteOnlyWorksheet(parent=self, title=title)
+        else:
+            new_ws = Worksheet(parent=self, title=title)
+
+        self._add_sheet(sheet=new_ws, index=index)
+        return new_ws
+
+8. Save workbook
+
+# Save the workbook to a file
+wb.save("myworkbook.xlsx")
+
+9. Close workbook - actually going to leave this out; looks like save() both saves and closes the workbook
+
+sampleWorkbook.close()
+
+// - - - Process: Extract Data from Word Doc - - - //
+
+1. Open doc file submitted by team member - don't actually need to open doc to read from it; would only need this if we were writing to word doc
+
+import subprocess
+applProcess = subprocess.Popen(["C:\\Windows\\System32\\notepad.exe", "c:\\misc\text\.txt"])
+
+2. Get full text from doc
+
+for reading from paragraphs (probably not going to use, but keeping for reference):
+import docx 
+doc = docx.Document("demo.docx")
+fullText = []
+for words in doc.paragraphs:
+    fullText.append(words.text)
+
+from reading from the second column of a table:
+doc = docx.Document(docx_path)
+col2_text = []
+for table in doc.tables:
+for row in table.rows:
+if len(row.cells) >= 2:  # make sure there is a second column
+col2_text.append(row.cells[1].text.strip())  # index 1 = second column
+return col2_text
+
+example return text:
+
+Frodo
+Baggins
+The Green Dragon
+Snack Delivery
+Gandalf Mithrandir
+January 11, 2024
+February 17, 2025
+f_baggins@email.com
+1-345-234-6789
+1-453-567-2345
+Gluten, dairy
+
+3. Save data as variable 
+
+4. Close word doc - won't need to do this, cause we didn't end up opening it
+
+applProcess.kill()
+
+5. Open Team List workbook
+
+import openpyxl
+sampleWorkbook = openpyxl.load_workbook("C:\\GeorgianCollege\\COMP1099\\TestFile.xlsx")
+
+6. Input data into Team List Workbook (Process: Input Data Into Workbook )
+
+// - - - Process: Extract Data from Excel File - - - //
+
+1. Open excel file submitted by team member
+
+import openpyxl
+sampleWorkbook = openpyxl.load_workbook("C:\\GeorgianCollege\\COMP1099\\TestFile.xlsx")
+
+2. Get cell data
+
+# Accessing range
+cell_range = ws['A1:B2']
+for row in cell_range:
+    for cell in row:
+        print(cell.value)
+
+3. Save data as variable
+
+4. Close excel file
+
+sampleWorkbook.close()
+
+5. Open Team List workbook
+
+import openpyxl
+sampleWorkbook = openpyxl.load_workbook("C:\\GeorgianCollege\\COMP1099\\TestFile.xlsx")
+
+6. Input data into Team List Workbook (Process: Input Data Into Workbook )
+
+/* - - - Process: Input Data Into Workbook - - - */
+
+1. Open workbook
+
+sampleWorkbook = openpyxl.load_workbook("C:\\GeorgianCollege\\COMP1099\\TestFile.xlsx")
+
+2. Append a new row with values
+
+append(iterable)
+Appends a group of values at the bottom of the current sheet.
+append([‘This is A1’, ‘This is B1’, ‘This is C1’]) 
+
+# You can also append rows to the end of the current data
+ws.append([1, 2])
+ws.append([3, 4])
+
+ws.append("Frodo", "Baggins", etc...)
+syntax will add a new row at the bottom with argument values
+
+3. Close workbook
+
+sampleWorkbook.close()
+
+/* - - - Process: extract list of allergies - - - */
+
+1. Open workbook
+
+sampleWorkbook = openpyxl.load_workbook("C:\\GeorgianCollege\\COMP1099\\TestFile.xlsx")
+
+2. Delete sheet two (i.e. clear old allergy sheet)
+
+    def remove(self, worksheet):
+        """Remove `worksheet` from this workbook."""
+        idx = self._sheets.index(worksheet)
+        self._sheets.remove(worksheet)
+
+3. Create new sheet
+
+ def create_sheet(self, title=None, index=None):
+        """Create a worksheet (at an optional index).
+
+        :param title: optional title of the sheet
+        :type title: str
+        :param index: optional position at which the sheet will be inserted
+        :type index: int
+
+        """
+        if self.read_only:
+            raise ReadOnlyWorkbookException('Cannot create new sheet in a read-only workbook')
+
+        if self.write_only :
+            new_ws = WriteOnlyWorksheet(parent=self, title=title)
+        else:
+            new_ws = Worksheet(parent=self, title=title)
+
+        self._add_sheet(sheet=new_ws, index=index)
+        return new_ws
+
+4. Copy sheet 1 into sheet 2
+
+ new_title = u"{0} Copy".format(from_worksheet.title)
+        to_worksheet = self.create_sheet(title=new_title)
+        cp = WorksheetCopy(source_worksheet=from_worksheet, target_worksheet=to_worksheet)
+        cp.copy_worksheet()
+        return to_worksheet
+
+5. Set sheet 2 as active sheet
+
+    @active.setter
+    def active(self, value):
+        """Set the active sheet"""
+        if not isinstance(value, (_WorkbookChild, INTEGER_TYPES)):
+            raise TypeError("Value must be either a worksheet, chartsheet or numerical index")
+        if isinstance(value, INTEGER_TYPES):
+            self._active_sheet_index = value
+            return
+            #if self._sheets and 0 <= value < len(self._sheets):
+                #value = self._sheets[value]
+            #else:
+                #raise ValueError("Sheet index is outside the range of possible values", value)
+        if value not in self._sheets:
+            raise ValueError("Worksheet is not in the workbook")
+        if value.sheet_state != "visible":
+            raise ValueError("Only visible sheets can be made active")
+
+        idx = self._sheets.index(value)
+        self._active_sheet_index = idx
+
+6. Delete all columns except first name, last name, allergies
+
+for cell in ws['B']:
+    cell.value = None
+
+ws['B'] → in openpyxl, this returns a tuple of Cell objects representing every cell in column B.
+
+7. Iterate over all rows and delete rows with no allergy values
+
+ws.max_row → returns the highest row index in the sheet that contains data.
+ws.min_row → returns the lowest row index in the sheet that contains data.
+
+# Loop backwards through the rows so deletion doesn’t mess indexing
+for row in range(ws.max_row, 0, -1): < - start, stop, step
+    cell = ws[f"{col_letter}{row}"] < - f"{col_letter}{row}" builds a cell reference like "B3" or "B10"
+    if cell.value is None:
+        ws.delete_rows(row)
+
+whatever rows are left gives us our list of people with allergies

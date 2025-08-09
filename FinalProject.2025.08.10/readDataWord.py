@@ -10,7 +10,7 @@ from openpyxl import Workbook
 def readWordDoc():
     
     # fileFromUser is the variable the admin will change to determine which word doc they wish to read from
-    fileFromUser = "TeamMemberTwo.docx"
+    fileFromUser = "TeamMemberThree.docx"
     folderForUserFiles = r"C:\Users\E.M. Janssen\Documents\GitHub\COMP1112.Python.2025\FinalProject.2025.08.10\ExampleFiles"
     projectRootDirectory = r"C:\Users\E.M. Janssen\Documents\GitHub\COMP1112.Python.2025\FinalProject.2025.08.10"
 

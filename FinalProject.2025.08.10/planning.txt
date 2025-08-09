@@ -16,6 +16,7 @@ We save the extracted data as a variable.
 Close the file.
 Input the user data to a workbook.
 Other functions that can be optionally run: output a couple specific reports/lists (for example, a list of food allergies).
+Template would ask users to leave allergies field empty if they have none; might need to manually verify new entires to make sure the field doesn't say something like 'n/a'.
 
 Six basic code sections:
 createWorkbook.py
@@ -33,6 +34,8 @@ generateReports.py
 6. Output curated lists
 
 Modules Required: os, openpyxl, docx, subprocess
+from openpyxl.worksheet.worksheet import Worksheet
+from openpyxl.worksheet.copier import WorksheetCopy
 
 Required specifically for Outlook:
 import imaplib
@@ -40,7 +43,7 @@ import email
 from email.header import decode_header
 import webbrowser
 
-Resources/reference code:
+Resources for reference code:
 - Lectures 7, 8, 11
 - https://automatetheboringstuff.com/3e/chapter14.html
 - https://openpyxl.readthedocs.io/en/stable/
@@ -92,14 +95,36 @@ End date (if applicable)
 Email	
 Landline	
 Mobile	
-Allergies
+Food Allergies
 
-6. Save workbook
+7. Add a second sheet (for generating the most current allergy list)
+
+    def create_sheet(self, title=None, index=None):
+        """Create a worksheet (at an optional index).
+
+        :param title: optional title of the sheet
+        :type title: str
+        :param index: optional position at which the sheet will be inserted
+        :type index: int
+
+        """
+        if self.read_only:
+            raise ReadOnlyWorkbookException('Cannot create new sheet in a read-only workbook')
+
+        if self.write_only :
+            new_ws = WriteOnlyWorksheet(parent=self, title=title)
+        else:
+            new_ws = Worksheet(parent=self, title=title)
+
+        self._add_sheet(sheet=new_ws, index=index)
+        return new_ws
+
+8. Save workbook
 
 # Save the workbook to a file
 wb.save("myworkbook.xlsx")
 
-7. Close workbook
+9. Close workbook
 
 sampleWorkbook.close()
 
@@ -183,7 +208,7 @@ sampleWorkbook = openpyxl.load_workbook("C:\\GeorgianCollege\\COMP1099\\TestFile
 
 6. Input data into Team List Workbook (Process: Input Data Into Workbook )
 
-// - - - Process: Extract Data from Outlook Email - - - //
+// - - - Process: Extract Data from Outlook Email - - - // <-- nice-to-have; will learn how to do this if we have time
 
 learn how using this guide
 1. connect to outlook 
@@ -194,7 +219,11 @@ https://thepythoncode.com/article/reading-emails-in-python
 
 /* - - - Process: Input Data Into Workbook - - - */
 
-1. Append a new row with values
+1. Open workbook
+
+sampleWorkbook = openpyxl.load_workbook("C:\\GeorgianCollege\\COMP1099\\TestFile.xlsx")
+
+2. Append a new row with values
 
 append(iterable)
 Appends a group of values at the bottom of the current sheet.
@@ -206,3 +235,92 @@ ws.append([3, 4])
 
 ws.append("Frodo", "Baggins", etc...)
 syntax will add a new row at the bottom with argument values
+
+3. Close workbook
+
+sampleWorkbook.close()
+
+/* - - - Process: extract list of allergies - - - */
+
+1. Open workbook
+
+sampleWorkbook = openpyxl.load_workbook("C:\\GeorgianCollege\\COMP1099\\TestFile.xlsx")
+
+2. Delete sheet two (i.e. clear old allergy sheet)
+
+    def remove(self, worksheet):
+        """Remove `worksheet` from this workbook."""
+        idx = self._sheets.index(worksheet)
+        self._sheets.remove(worksheet)
+
+3. Create new sheet
+
+ def create_sheet(self, title=None, index=None):
+        """Create a worksheet (at an optional index).
+
+        :param title: optional title of the sheet
+        :type title: str
+        :param index: optional position at which the sheet will be inserted
+        :type index: int
+
+        """
+        if self.read_only:
+            raise ReadOnlyWorkbookException('Cannot create new sheet in a read-only workbook')
+
+        if self.write_only :
+            new_ws = WriteOnlyWorksheet(parent=self, title=title)
+        else:
+            new_ws = Worksheet(parent=self, title=title)
+
+        self._add_sheet(sheet=new_ws, index=index)
+        return new_ws
+
+4. Copy sheet 1 into sheet 2
+
+ new_title = u"{0} Copy".format(from_worksheet.title)
+        to_worksheet = self.create_sheet(title=new_title)
+        cp = WorksheetCopy(source_worksheet=from_worksheet, target_worksheet=to_worksheet)
+        cp.copy_worksheet()
+        return to_worksheet
+
+5. Set sheet 2 as active sheet
+
+    @active.setter
+    def active(self, value):
+        """Set the active sheet"""
+        if not isinstance(value, (_WorkbookChild, INTEGER_TYPES)):
+            raise TypeError("Value must be either a worksheet, chartsheet or numerical index")
+        if isinstance(value, INTEGER_TYPES):
+            self._active_sheet_index = value
+            return
+            #if self._sheets and 0 <= value < len(self._sheets):
+                #value = self._sheets[value]
+            #else:
+                #raise ValueError("Sheet index is outside the range of possible values", value)
+        if value not in self._sheets:
+            raise ValueError("Worksheet is not in the workbook")
+        if value.sheet_state != "visible":
+            raise ValueError("Only visible sheets can be made active")
+
+        idx = self._sheets.index(value)
+        self._active_sheet_index = idx
+
+6. Delete all columns except first name, last name, allergies
+
+for cell in ws['B']:
+    cell.value = None
+
+ws['B'] → in openpyxl, this returns a tuple of Cell objects representing every cell in column B.
+
+7. Iterate over all rows and delete rows with no allergy values
+
+ws.max_row → returns the highest row index in the sheet that contains data.
+ws.min_row → returns the lowest row index in the sheet that contains data.
+
+# Loop backwards through the rows so deletion doesn’t mess indexing
+for row in range(ws.max_row, 0, -1): < - start, stop, step
+    cell = ws[f"{col_letter}{row}"] < - f"{col_letter}{row}" builds a cell reference like "B3" or "B10"
+    if cell.value is None:
+        ws.delete_rows(row)
+
+whatever rows are left gives us our list of people with allergies

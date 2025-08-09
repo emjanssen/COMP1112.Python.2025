@@ -10,7 +10,7 @@ from openpyxl import Workbook
 
 def createDirectory():
 
-    adminWorkbookDirectory = r"C:\Users\E.M. Janssen\Documents\GitHub\COMP1112.Python.2025\FinalProject.2025.08.10\admin"
+    adminWorkbookDirectory = r"C:\Users\E.M. Janssen\Documents\GitHub\COMP1112.Python.2025\FinalProject.2025.08.10\Process1.AdminWorkbook"
     if not os.path.exists(adminWorkbookDirectory):
         os.makedirs(adminWorkbookDirectory)
         print("Directory created...")
@@ -57,7 +57,7 @@ def addSecondSheet(adminWorkbook):
     return adminWorkbook
 
 def saveWorkbook(adminWorkbook, adminWorkbookDirectory):
-    filePath = os.path.join(adminWorkbookDirectory, "adminWorkbook.xlsx")
+    filePath = os.path.join(adminWorkbookDirectory, "AdminWorkbook.xlsx")
     adminWorkbook.save(filePath)
     print(f"Workbook saved at {filePath}...")
 

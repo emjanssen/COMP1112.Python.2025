@@ -124,7 +124,7 @@ Food Allergies
 # Save the workbook to a file
 wb.save("myworkbook.xlsx")
 
-9. Close workbook
+9. Close workbook - actually going to leave this out; looks like save() both saves and closes the workbook
 
 sampleWorkbook.close()
 

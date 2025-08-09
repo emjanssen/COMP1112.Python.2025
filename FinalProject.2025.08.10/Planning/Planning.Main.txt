@@ -1,12 +1,11 @@
 Intro/problem statement: 
-I worked as a program admin assistant for five years.
+I worked as an admin assistant for six years (one in operations, five in program/project environments).
 This project is a series of scripts I wish I'd knew how to write back then.
-These scripts reflect my own experiences/arduous tasks, but basically any company is going to have comparable admin-level timesinks.
-I've also made up a few new processes to practice what we've learned in class.
+The scripts reflect my own experiences, but basically any company is going to have comparable admin-level timesinks.
 There are five process sections to this project:
 
 1. Program Team List
 2. Template: Meeting Agenda
 3. Template: Memo From Director
 4. Reminder Email Timer
-5. Create Encrypted PDF
+5. Encrypted PDF

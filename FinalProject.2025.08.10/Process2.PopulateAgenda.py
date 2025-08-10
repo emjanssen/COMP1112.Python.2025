@@ -5,7 +5,7 @@ from docx import Document
 
 # - - - Template Inputs - - - #
 
-#admin edits these variable values based on what they'd like their new edited agenda to say
+#admin edits these variable values based on what they'd like their new modified agenda to say
 newTitle        = "Council of Elrond"
 newDate         = "2025/08/16"
 newTime         = "13:30"

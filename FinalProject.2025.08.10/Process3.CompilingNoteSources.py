@@ -50,7 +50,6 @@ def createCompilationDocument(docOneText, docTwoText, meetingNotesDirectory):
     compiledNotes.add_heading("Team Member Two")
     compiledNotes.add_paragraph(docTwoText)
 
-
     compiledNotesSavePath = os.path.join(meetingNotesDirectory, "CompiledMeetingNotes.docx")
     compiledNotes.save(compiledNotesSavePath)
 
